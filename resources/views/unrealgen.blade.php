@@ -2,25 +2,261 @@
 
 
 @section('content')
-    
-<div class="card mt-2">
+
+<div class="card mt-2 mb-5">
     <div class="card-header">UnrealIrcD Config</div>
     <div class="card-body">
-        
+
         <form action="/unrealgen" method="POST">
             @csrf
             <div class="form-group row">
-                <label for="colFormLabel" class="col-sm-2 col-form-label">Network Name</label>
-                                     <div class="col-sm-10">
-                  <input type="text" class="form-control" name="name" placeholder="e.g. irc.name.com">
+                <label for="name" class="col-sm-7 col-form-label border-bottom">Network Name:</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" name="name" placeholder="e.g. irc.name.com" required>
                 </div>
-              </div>
-             <div class="mt-2" >
-                 <button type="submit" class="btn btn-primary">Generate</button>
-             </div>
+            </div>
+            <div class="form-group row">
+                <label for="description" class="col-sm-7 col-form-label border-bottom">Network Description:</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" name="description" placeholder="e.g. Chat Network!" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="numericident" class="col-sm-7 col-form-label border-bottom">Numeric Ident - Must be between 1 and 255 & be unique from other shells connected to the network:</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" name="numericident" placeholder="i.e. 1" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="ssl" class="col-sm-7 col-form-label border-bottom">Would you like to enable SSL (Secure Socket Layer)?: </label>
+                <div class="col-sm-5">
+                    <div class="form-check-inline">
+                        <input class="form-check-input" type="radio" name="ssl" id="ssl" value="false" checked>
+                        <label class="form-check-label" for="no">
+                          No
+                        </label>
+                      </div>
+                      <div class="form-check-inline">
+                        <input class="form-check-input" type="radio" name="ssl" id="ssl" value="true">
+                        <label class="form-check-label" for="yes">
+                          Yes
+                        </label>
+                      </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="maxclient" class="col-sm-7 col-form-label border-bottom">Max Clients Allowed to Connect:</label>
+                <div class="col-sm-5">
+                    <select class="form-control" name="maxclient" id="maxclient">
+                    <option value="200">200</option>
+                    <option value="500">500</option>
+                    <option value="700">700</option>
+                    <option value="1000">1000</option>
+                    <option value="1200">1200</option>
+                    <option value="1500">1500</option>
+                    <option value="2000">2000</option>
+                </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="networkowner" class="col-sm-7 col-form-label border-bottom">Network Owner: </label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" name="networkowner" placeholder="e.g. John" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="opernick" class="col-sm-7 col-form-label border-bottom">Oper Nickname: </label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" name="opernick" placeholder="i.e. The name used to oper up with" required>
+                </div>
+            </div>
+           
+                <div class="form-group row">
+                    <label for="passtype" class="col-sm-7 col-form-label border-bottom">Please Select Password Type: </label>
+                    <div class="col-sm-5" id="switchb">
+                        <div class="form-check-inline">
+                            <input class="form-check-input" type="radio" name="passtype" id="encrypted" value="false" onclick="change(this)" >
+                            <label class="form-check-label" for="no">
+                                Encrypted
+                            </label>
+                        
+                            <input class="form-check-input ml-3" type="radio" name="passtype" id="plaintext" value="true" onclick="change(this)">
+                            <label class="form-check-label" for="yes">
+                            PlainText
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div  class="d-none" id="operpassen">
+                <div class="form-group row">
+                    <label for="passencrypt" class="col-sm-7 col-form-label">Password Encryption Type:</label>
+                    <div class="col-sm-5">
+                        <select class="form-control" name="passencrypt" id="passencrypt">
+                        <option value="md5">MD5</option>
+                        <option value="ripemd160">ripemd160</option>
+                        <option value="sha1">sha1 (For servers with SSL only)</option>
+                    </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="operpassen" class="col-sm-7 col-form-label border-bottom">Encrypted Oper Password (To find out how to encrypt a password see <strong> <a href="#" data-toggle="modal" data-target="#exampleModal">HERE</a></strong>): </label>
+                    <div class="col-sm-5">
+                        <input type="password" class="form-control" name="operpassen" id="operpassenn" placeholder="Enter Oper Password" required>
+                    </div>
+                </div>
+            </div>
+                <div class="form-group row d-none" id="operpasspl">
+                    <label for="operpasspl" class="col-sm-7 col-form-label border-bottom">Enter PlainText Oper Pass </label>
+                    <div class="col-sm-5">
+                        <input type="password" class="form-control" name="operpasspl" id="operpassepll" placeholder="Enter Oper Password" required>
+                    </div>
+                </div>
+                
+                <div class="form-group row">
+                    <label for="operwhois" class="col-sm-7 col-form-label border-bottom">Oper Whois Line <span style="font-size: 85%;">(This shows up when someone preforms a whois on you if you are opered up)</span> :</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" name="operwhois" placeholder="i.e. Netowrk Administrator" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="bindip" class="col-sm-7 col-form-label border-bottom">Enter the IP Address for the Shell the IRCd is being setup on:</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" name="bindip" placeholder="e.g. 127.0.0.1" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="diepass" class="col-sm-7 col-form-label border-bottom">Password to "die" the Server (shut the server down) -<span style="font-size: 85%;"> This does not need to be encrypted</span>:</label>
+                    <div class="col-sm-5">
+                        <input type="password" class="form-control" name="diepass" placeholder="Password" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="restartpass" class="col-sm-7 col-form-label border-bottom">Password to "restart" the Server - <span style="font-size: 85%;">This does not need to be encrypted</span>:</label>
+                    <div class="col-sm-5">
+                        <input type="password" class="form-control" name="restartpass" placeholder="Password" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="helpchannel" class="col-sm-7 col-form-label border-bottom">Help Channel:</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" name="helpchannel" placeholder="e.g. #services or #help or #chat" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="cloakkey1" class="col-sm-7 col-form-label border-bottom">Cloak key #1: (For more information on cloak keys see <strong> <a href="#" data-toggle="modal" data-target="#cloakModal">HERE</a></strong>): </label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" name="cloakkey1" placeholder="Enter cloak Key #1" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="cloakkey2" class="col-sm-7 col-form-label border-bottom">Cloak key #1: (For more information on cloak keys see <strong> <a href="#" data-toggle="modal" data-target="#cloakModal">HERE</a></strong>): </label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" name="cloakkey2" placeholder="Enter cloak Key #2" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="cloakkey2" class="col-sm-7 col-form-label border-bottom">Cloak key #1: (For more information on cloak keys see <strong> <a href="#" data-toggle="modal" data-target="#cloakModal">HERE</a></strong>): </label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" name="cloakkey2" placeholder="Enter cloak Key #2" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="operchannel" class="col-sm-7 col-form-label border-bottom">Oper Chan - Channel that ircops will join when they oper up:</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" name="operchannel" placeholder="e.g. #admins or #opers or #ircops" required>
+                    </div>
+                </div>
+            <div class="mt-2">
+                <button type="submit" class="btn btn-primary">Generate</button>
+            </div>
         </form>
-    
     </div>
 </div>
 
+  
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">How to encrypt a password</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>  To encrypt a password, type <strong>/mkpasswd</strong> into the status window of a network you are an ircop on.</p> For example <strong>/mkpasswd sha1 test </strong> would return  <p> ** Authentication phrase (method=sha1, para=test) is: <span style="font-style: italic" > $8rvIvg3C$uL/QGEFj2p79Tv1GnruvEUnmDNE=. </span> </p><p> The section of that to copy and paste into the password box would be $8rvIvg3C$uL/QGEFj2p79Tv1GnruvEUnmDNE=. </p>
+        <hr>
+      <p>  Note: To use sha1 you must change the following option to "Yes" when compiling your IRCd</p>
+
+      <p> <strong> Do you want to support SSL (Secure Socket Layer) connections?</p>
+        <p>   [No] -> Yes </strong> </p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="cloakModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Cloak keys</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>You need to use a string with random lowercase (a-z), uppercase (A-Z) and digit characters. The string should be 5-100 characters long (10-20 is just fine)
+           </p>
+           <hr>
+           <p> So for example:</p>
+          <ul><strong>
+              <li>Key 1: uvEUnmEFj2p79Tv1Gnr</li>
+              <li>Key 2: GnruvEUnmEFj2p79Tv1</li>
+              <li>Key 3: ruvEUnmEFj2p7uvEUnm</li></strong>
+          </ul>
+          <hr>
+          <p>These cloak keys must be the same on all servers on the networks or else bans won't work correctly.</p>
+    
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+    var plain = document.getElementById("operpassen")
+    var encrypted = document.getElementById("operpasspl")
+    var inputplain = document.getElementById("operpassenn")
+    var inputencrypted = document.getElementById("operpassepll")
+    function change(radio) { 
+        if (radio.checked && radio.id === "plaintext") {
+            encrypted.classList.remove('d-none')
+            plain.classList.add('d-none')
+            inputplain.removeAttribute('required')
+            inputencrypted.setAttribute('required', '')
+        } else {
+            plain.classList.remove('d-none')
+            encrypted.classList.add('d-none')
+            inputencrypted.removeAttribute('required')
+            inputplain.setAttribute('required', '')
+        }
+    }
+</script>
+@endsection
+
+@section('script')
+<script>
+    $('#pass').on('shown.bs.modal', function () {
+$('#pass').trigger('focus')
+})
+</script>
+
+
+
+     
 @endsection

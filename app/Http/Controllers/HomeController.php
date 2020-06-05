@@ -20,7 +20,7 @@ class HomeController extends Controller
     }
 
     public function unrealgenr(Request $request){
-
+        /* dd($request); */
         return view('unrealresult')->with('request', $request);
     }
     public function anopegenr(Request $request){

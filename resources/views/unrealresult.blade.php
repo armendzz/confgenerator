@@ -38,7 +38,7 @@
         me {
             name {{ $request->name }};
             info "{{ $request->info }}";
-            sid 001;
+            sid {{ $request->numericident }};
         };
         admin {
                 "Server: SiSrv.net";
@@ -108,13 +108,13 @@
          
         /* Oper blocks define your IRC Operators. */
          
-        oper DeviL {
+        oper {{ $request->opernick }} {
                 mask *@*;
             password "$argon2id$v=19$m=8192,t=3,p=2$86M+flkuHHzLTua1d1AyNA$Wvr52Y+PS5XUeUvN9fFDKEhBREmTHbmgK0NUnnUL9As" { argon2; };
             class opers;
             operclass netadmin-with-override;
-                maxlogins 5;
-            swhois "is SiSrv staff";
+            maxlogins 5;
+            swhois "{{ $request->operwhois }}";
             vhost staff.sisrv.net;
         };
          
@@ -155,26 +155,26 @@
         /* Standard IRC port 6667 */
          
         listen {
-            ip shell.ip.here;
+            ip {{ $request->bindip }};
                 port 6667;
         };
         listen {
-            ip shell.ip.here;
+            ip {{ $request->bindip }};
                 port 6668;
         };
         listen {
-            ip shell.ip.here;
+            ip {{ $request->bindip }};
                 port 6669;
         };
         listen {
-            ip shell.ip.here;
+            ip {{ $request->bindip }};
             port 8080;
             options { tls; serversonly; };
         };
          
         /* Standard IRC SSL/TLS port 6679 */
         listen {
-            ip shell.ip.here;
+            ip {{ $request->bindip }};
             port 6697;
             options { ssl; };
         };
@@ -223,8 +223,8 @@
          
         /* Here you can add a password for the IRCOp-only /DIE and /RESTART commands. */
         drpass {
-            restart "RestartBaby";
-            die "DieBigMama";
+        restart "{{ $request->diepass }}";
+            die "{{ $request->restartpass }}";
         };
          
         tld {
@@ -280,14 +280,14 @@
             services-server     "services.sisrv.net";
                 sasl-server             "services.sisrv.net";
             stats-server        "stats.sisrv.net";
-            help-channel        "#SiSrv";
+            help-channel        "{{ $request->helpchannel }}";
             hiddenhost-prefix   "SiSrv";
             prefix-quit         "SiSrv.net";
          
             cloak-keys {
-                 "LCdRdwzb88hPkMmnGF3cbOv0b";
-                 "mFFQaKFSjSl267cmmElq2uHqx";
-                 "wHmk7pJULg8OuhCLfp74MgQId";
+                 "{{ $request->cloakkey1 }}";
+                 "{{ $request->cloakkey2 }}";
+                 "{{ $request->cloakkey2 }}";
             };
         };
          
@@ -303,7 +303,7 @@
                 snomask-on-oper "+cFfkejvGnNqsSo";
                 who-limit 3;
                 nick-length 15;
-            oper-auto-join "#SiSrv,#Staff";
+            oper-auto-join "{{ $request->operchannel }}";
             options {
                 hide-ulines;
                     flat-map;
