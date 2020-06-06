@@ -1,5 +1,37 @@
 @extends('layouts/app')
 
+<style>
+    .tags-input-wrapper {
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 4px;
+  max-width: 400px;
+  border: 1px solid #ccc
+}
+
+.tags-input-wrapper input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 150px;
+}
+
+.tags-input-wrapper .tag {
+  display: inline-block;
+  background-color: #009432;
+  color: white;
+  border-radius: 40px;
+  padding: 0px 3px 0px 7px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+
+.tags-input-wrapper .tag a {
+  margin: 0 7px 3px;
+  display: inline-block;
+  cursor: pointer;
+}
+</style>
 
 @section('content')
 
@@ -125,6 +157,14 @@
                     </div>
                 </div>
                 <div class="form-group row">
+                    <label for="ports" class="col-sm-7 col-form-label border-bottom">Enter PORT for the IRCd <span>Default port is 6667</span> :</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" name="ports[]" placeholder="e.g. 6667" required>
+                        <div id="addports"></div>
+                        <button type="button" class="btn btn-success mt-1" onclick="addmoreports()">Add More Port</button>
+                    </div>
+                </div>
+                <div class="form-group row">
                     <label for="diepass" class="col-sm-7 col-form-label border-bottom">Password to "die" the Server (shut the server down) -<span style="font-size: 85%;"> This does not need to be encrypted</span>:</label>
                     <div class="col-sm-5">
                         <input type="password" class="form-control" name="diepass" placeholder="Password" required>
@@ -155,9 +195,9 @@
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="cloakkey2" class="col-sm-7 col-form-label border-bottom">Cloak key #1: (For more information on cloak keys see <strong> <a href="#" data-toggle="modal" data-target="#cloakModal">HERE</a></strong>): </label>
+                    <label for="cloakkey3" class="col-sm-7 col-form-label border-bottom">Cloak key #1: (For more information on cloak keys see <strong> <a href="#" data-toggle="modal" data-target="#cloakModal">HERE</a></strong>): </label>
                     <div class="col-sm-5">
-                        <input type="text" class="form-control" name="cloakkey2" placeholder="Enter cloak Key #2" required>
+                        <input type="text" class="form-control" name="cloakkey3" placeholder="Enter cloak Key #3" required>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -173,60 +213,69 @@
     </div>
 </div>
 
-  
-<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">How to encrypt a password</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-          <p>  To encrypt a password, type <strong>/mkpasswd</strong> into the status window of a network you are an ircop on.</p> For example <strong>/mkpasswd sha1 test </strong> would return  <p> ** Authentication phrase (method=sha1, para=test) is: <span style="font-style: italic" > $8rvIvg3C$uL/QGEFj2p79Tv1GnruvEUnmDNE=. </span> </p><p> The section of that to copy and paste into the password box would be $8rvIvg3C$uL/QGEFj2p79Tv1GnruvEUnmDNE=. </p>
-        <hr>
-      <p>  Note: To use sha1 you must change the following option to "Yes" when compiling your IRCd</p>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">How to encrypt a password</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p> To encrypt a password, type <strong>/mkpasswd</strong> into the status window of a network you are
+                    an ircop on.</p> For example <strong>/mkpasswd sha1 test </strong> would return <p> **
+                    Authentication phrase (method=sha1, para=test) is: <span style="font-style: italic">
+                        $8rvIvg3C$uL/QGEFj2p79Tv1GnruvEUnmDNE=. </span> </p>
+                <p> The section of that to copy and paste into the password box would be
+                    $8rvIvg3C$uL/QGEFj2p79Tv1GnruvEUnmDNE=. </p>
+                <hr>
+                <p> Note: To use sha1 you must change the following option to "Yes" when compiling your IRCd</p>
 
-      <p> <strong> Do you want to support SSL (Secure Socket Layer) connections?</p>
-        <p>   [No] -> Yes </strong> </p>
+                <p> <strong> Do you want to support SSL (Secure Socket Layer) connections?</p>
+                <p> [No] -> Yes </strong> </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
-  <div class="modal fade" id="cloakModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal fade" id="cloakModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Cloak keys</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Cloak keys</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>You need to use a string with random lowercase (a-z), uppercase (A-Z) and digit characters. The
+                    string should be 5-100 characters long (10-20 is just fine)
+                </p>
+                <hr>
+                <p> So for example:</p>
+                <ul><strong>
+                        <li>Key 1: uvEUnmEFj2p79Tv1Gnr</li>
+                        <li>Key 2: GnruvEUnmEFj2p79Tv1</li>
+                        <li>Key 3: ruvEUnmEFj2p7uvEUnm</li>
+                    </strong>
+                </ul>
+                <hr>
+                <p>These cloak keys must be the same on all servers on the networks or else bans won't work correctly.
+                </p>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
         </div>
-        <div class="modal-body">
-          <p>You need to use a string with random lowercase (a-z), uppercase (A-Z) and digit characters. The string should be 5-100 characters long (10-20 is just fine)
-           </p>
-           <hr>
-           <p> So for example:</p>
-          <ul><strong>
-              <li>Key 1: uvEUnmEFj2p79Tv1Gnr</li>
-              <li>Key 2: GnruvEUnmEFj2p79Tv1</li>
-              <li>Key 3: ruvEUnmEFj2p7uvEUnm</li></strong>
-          </ul>
-          <hr>
-          <p>These cloak keys must be the same on all servers on the networks or else bans won't work correctly.</p>
-    
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-      </div>
     </div>
-  </div>
+</div>
 
 <script>
     var plain = document.getElementById("operpassen")
@@ -247,9 +296,13 @@
         }
     }
 </script>
+
+
 @endsection
 
-@section('script')
+@section('js')
+
+
 <script>
     $('#pass').on('shown.bs.modal', function () {
 $('#pass').trigger('focus')
@@ -257,6 +310,10 @@ $('#pass').trigger('focus')
 </script>
 
 
-
-     
+<script>
+    function addmoreports() {
+        var dummy = '<input type="text" class="form-control mt-1" name="ports[]" placeholder="e.g. 6667" required>\r\n';
+        document.getElementById('addports').innerHTML += dummy;  
+    }
+</script>
 @endsection

@@ -37,7 +37,7 @@
          
         me {
             name {{ $request->name }};
-            info "{{ $request->info }}";
+            info "{{ $request->description }}";
             sid {{ $request->numericident }};
         };
         admin {
@@ -108,6 +108,7 @@
          
         /* Oper blocks define your IRC Operators. */
          
+
         oper {{ $request->opernick }} {
                 mask *@*;
             password "$argon2id$v=19$m=8192,t=3,p=2$86M+flkuHHzLTua1d1AyNA$Wvr52Y+PS5XUeUvN9fFDKEhBREmTHbmgK0NUnnUL9As" { argon2; };
@@ -118,6 +119,7 @@
             vhost staff.sisrv.net;
         };
          
+
          
         /* Blacklist Config. */
          
@@ -154,23 +156,13 @@
          
         /* Standard IRC port 6667 */
          
-        listen {
-            ip {{ $request->bindip }};
-                port 6667;
-        };
-        listen {
-            ip {{ $request->bindip }};
-                port 6668;
-        };
-        listen {
-            ip {{ $request->bindip }};
-                port 6669;
-        };
-        listen {
-            ip {{ $request->bindip }};
-            port 8080;
-            options { tls; serversonly; };
-        };
+        @forEach($request->ports as $ports){
+            listen {
+                ip {{ $request->bindip }};
+                    port {{ $ports }};
+            };
+        }
+        @endforeach
          
         /* Standard IRC SSL/TLS port 6679 */
         listen {
@@ -431,7 +423,7 @@
          * For any help visit https://www.SiSrv.Net
          * or join #SiSrv @ irc.sisrv.net
         */</code></pre>
-     {{--    <pre data-src="/foobar.js" class="line-numbers language-unrealscript"></pre> --}}
+     
     </div>
 </div>
 </div>
@@ -441,96 +433,4 @@
 
 <script src="/js/prism.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
-
-<script>
-    (function () {
-	if (typeof self === 'undefined' || !self.Prism || !self.document || !document.querySelector) {
-		return;
-	}
-
-	/**
-	 * @param {Element} [container=document]
-	 */
-	self.Prism.fileHighlight = function(container) {
-		container = container || document;
-
-		var Extensions = {
-			'js': 'javascript',
-			'py': 'python',
-			'rb': 'ruby',
-			'ps1': 'powershell',
-			'psm1': 'powershell',
-			'sh': 'bash',
-			'bat': 'batch',
-			'h': 'c',
-			'tex': 'latex'
-		};
-
-		Array.prototype.slice.call(container.querySelectorAll('pre[data-src]')).forEach(function (pre) {
-			// ignore if already loaded
-			if (pre.hasAttribute('data-src-loaded')) {
-				return;
-			}
-
-			// load current
-			var src = pre.getAttribute('data-src');
-
-			var language, parent = pre;
-			var lang = /\blang(?:uage)?-([\w-]+)\b/i;
-			while (parent && !lang.test(parent.className)) {
-				parent = parent.parentNode;
-			}
-
-			if (parent) {
-				language = (pre.className.match(lang) || [, ''])[1];
-			}
-
-			if (!language) {
-				var extension = (src.match(/\.(\w+)$/) || [, ''])[1];
-				language = Extensions[extension] || extension;
-			}
-
-			var code = document.createElement('code');
-			code.className = 'language-' + language;
-
-			pre.textContent = '';
-
-			code.textContent = 'Loading…';
-
-			pre.appendChild(code);
-
-			var xhr = new XMLHttpRequest();
-
-			xhr.open('GET', src, true);
-
-			xhr.onreadystatechange = function () {
-				if (xhr.readyState == 4) {
-
-					if (xhr.status < 400 && xhr.responseText) {
-						code.textContent = xhr.responseText;
-
-						Prism.highlightElement(code);
-						// mark as loaded
-						pre.setAttribute('data-src-loaded', '');
-					}
-					else if (xhr.status >= 400) {
-						code.textContent = '✖ Error ' + xhr.status + ' while fetching file: ' + xhr.statusText;
-					}
-					else {
-						code.textContent = '✖ Error: File does not exist or is empty';
-					}
-				}
-			};
-
-			xhr.send(null);
-		});
-	};
-
-	document.addEventListener('DOMContentLoaded', function () {
-		// execute inside handler, for dropping Event as argument
-		self.Prism.fileHighlight();
-	});
-
-})();
-</script>
 @endsection
