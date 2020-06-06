@@ -41,8 +41,8 @@
             sid {{ $request->numericident }};
         };
         admin {
-                "Server: SiSrv.net";
-                "E-Mail: support@sisrv.net";
+                "Server: {{ $request->description }}";
+                "E-Mail: {{ $request->klineadress }}";
         };
          
         /* Clients and servers are put in class { } blocks, we define them here.
@@ -57,7 +57,7 @@
         class clients
         {
             pingfreq 300;
-            maxclients 1000;
+            maxclients {{ $request->maxclient }};
             sendq 999999;
             recvq 9999;
         };
@@ -84,7 +84,7 @@
         allow {
             ip *@*;
             class clients;
-            maxperip 5;  
+            maxperip {{ $request->ipclient }};  
         };
          
         /* Deny channel block */
@@ -108,17 +108,31 @@
          
         /* Oper blocks define your IRC Operators. */
          
-
-        oper {{ $request->opernick }} {
+        @if(isset($request->operpassen))
+            oper {{ $request->opernick }} {
                 mask *@*;
-            password "$argon2id$v=19$m=8192,t=3,p=2$86M+flkuHHzLTua1d1AyNA$Wvr52Y+PS5XUeUvN9fFDKEhBREmTHbmgK0NUnnUL9As" { argon2; };
-            class opers;
-            operclass netadmin-with-override;
-            maxlogins 5;
-            swhois "{{ $request->operwhois }}";
-            vhost staff.sisrv.net;
-        };
-         
+                password "{{ $request->operpassen }}" { argon2; };
+                class opers;
+                operclass netadmin-with-override;
+                maxlogins 5;
+                swhois "{{ $request->operwhois }}";
+                vhost staff.sisrv.net;
+            };
+
+        @endif
+        @if(isset($request->operpasspl))
+        
+            oper {{ $request->opernick }} {
+                mask *@*;
+                password "{{ $request->operpasspl }}";
+                class opers;
+                operclass netadmin-with-override;
+                maxlogins 5;
+                swhois "{{ $request->operwhois }}";
+                vhost {{ $request->opervhost }};
+            };
+
+            @endif
 
          
         /* Blacklist Config. */
@@ -156,42 +170,50 @@
          
         /* Standard IRC port 6667 */
          
-        @forEach($request->ports as $ports){
+        @forEach($request->ports as $ports)
             listen {
                 ip *;
                 port {{ $ports }};
             };
-        }
+        
         @endforeach
-
+            @if (isset($request->sslports))
+                
+           
         /* Standard IRC SSL/TLS port 6679 */
-        @forEach($request->sslports as $ports){
+        @forEach($request->sslports as $ports)
             listen {
                 ip *;
                 port {{ $ports }};
                 options { ssl; };
             };
-        }
+        
         @endforeach
-
-        @forEach($request->serverports as $ports){
+        @endif
+        @if (isset($request->serverports))
+            
+        
+        @forEach($request->serverports as $ports)
             listen {
                 ip *;
                 port {{ $ports }};
                 options { serversonly; };
             };
-        }
+        
         @endforeach
-
-        @forEach($request->sslserverports as $ports){
+        @endif
+        @if (isset($request->sslserverports))
+            
+        
+        @forEach($request->sslserverports as $ports)
             listen {
                 ip *;
                 port {{ $ports }};
                 options { tls; serversonly; };
             };
-        }
+        
         @endforeach
-         
+        @endif
                 
         /*
          * Link blocks allow you to link multiple servers together to form a network.
@@ -289,8 +311,8 @@
          
         /* Network configuration */
         set {
-            network-name        "SiSrv";
-            default-server          "irc.sisrv.net";
+            network-name        "{{ $request->description }}";
+            default-server          "{{ $request->name }}";
             services-server     "services.sisrv.net";
                 sasl-server             "services.sisrv.net";
             stats-server        "stats.sisrv.net";
@@ -308,7 +330,7 @@
         /* Server specific configuration */
          
         set {
-            kline-address "support@sisrv.net";
+            kline-address "{{ $request->klineadress }}";
             modes-on-connect "+icxvw";
                 auto-join "#SiSrv";
                 modes-on-join "+ntVCTGf [3j#i1,7m#M1,2n#N1,6t#b]:2";    
@@ -359,87 +381,7 @@
                 virus-help-channel "#SiSrv";
                     except "#SiSrv,#Staff";
             };
-        };
-        /******************************************************
-        * KiwiIRCD config :
-        * Create your widget here: https://kiwiirc.com/login
-         *****************************************************/
-        except ban {
-            mask 109.169.31.4;
-        };
-        except ban {
-            mask 107.161.19.53;
-        };
-        except ban {
-            mask 107.161.19.109;
-        };
-        webirc {
-            mask 109.169.31.4;
-            password "yourpasswd";
-        };
-        webirc {
-            mask 107.161.19.53;
-            password "yourpasswd";
-        };
-        webirc {
-            mask 107.161.19.109;
-            password "yourpasswd";
-        };
-        except throttle {
-            mask 109.169.31.4;
-        };
-        except throttle {
-            mask 107.161.19.53;
-        };
-        except throttle {
-            mask 107.161.19.109;
-        };
-        /*************************************************************
-        * Mibbit config :
-        * Create your widget here: https://widgetmanager.mibbit.com/
-         ************************************************************/
-        webirc {
-            mask 64.62.228.82;
-            password "yourpasswd";
-        };
-        webirc {
-            mask 207.192.75.252;
-            password "yourpasswd";
-        };
-        webirc {
-            mask 78.129.202.38;
-            password "yourpasswd";
-        };
-        webirc {
-            mask 109.169.29.95;
-            password "yourpasswd";
-        };
-        except ban {
-            mask 64.62.228.82;
-        };
-        except ban {
-            mask 207.192.75.252;
-        };
-        except ban {
-            mask 78.129.202.38;
-        };
-        except ban {
-            mask 109.169.29.95;
-        };
-        except throttle {
-            mask 64.62.228.82;
-        };
-        except throttle {
-            mask 207.192.75.252;
-        };
-        except throttle {
-            mask 78.129.202.38;
-        };
-        except throttle {
-            mask 109.169.29.95;
-        };
-         
-         
+        };       
         /*
          * Unrealircd.conf by DeviL (support@sisrv.net).
          * For any help visit https://www.SiSrv.Net

@@ -56,7 +56,7 @@
             <div class="form-group row">
                 <label for="numericident" class="col-sm-7 col-form-label border-bottom">Numeric Ident - Must be between 1 and 255 & be unique from other shells connected to the network:</label>
                 <div class="col-sm-5">
-                    <input type="text" class="form-control" name="numericident" placeholder="i.e. 1" required>
+                    <input type="number" class="form-control" name="numericident" placeholder="i.e. 1" required>
                 </div>
             </div>
             <div class="form-group row">
@@ -91,6 +91,12 @@
                 </div>
             </div>
             <div class="form-group row">
+                <label for="ipclient" class="col-sm-7 col-form-label border-bottom">Max Client from same IP: </label>
+                <div class="col-sm-5">
+                    <input type="number" class="form-control" name="ipclient" placeholder="e.g. 3" required>
+                </div>
+            </div>
+            <div class="form-group row">
                 <label for="networkowner" class="col-sm-7 col-form-label border-bottom">Network Owner: </label>
                 <div class="col-sm-5">
                     <input type="text" class="form-control" name="networkowner" placeholder="e.g. John" required>
@@ -121,16 +127,6 @@
                 </div>
                 <div  class="d-none" id="operpassen">
                 <div class="form-group row">
-                    <label for="passencrypt" class="col-sm-7 col-form-label">Password Encryption Type:</label>
-                    <div class="col-sm-5">
-                        <select class="form-control" name="passencrypt" id="passencrypt">
-                        <option value="md5">MD5</option>
-                        <option value="ripemd160">ripemd160</option>
-                        <option value="sha1">sha1 (For servers with SSL only)</option>
-                    </select>
-                    </div>
-                </div>
-                <div class="form-group row">
                     <label for="operpassen" class="col-sm-7 col-form-label border-bottom">Encrypted Oper Password (To find out how to encrypt a password see <strong> <a href="#" data-toggle="modal" data-target="#exampleModal">HERE</a></strong>): </label>
                     <div class="col-sm-5">
                         <input type="password" class="form-control" name="operpassen" id="operpassenn" placeholder="Enter Oper Password" required>
@@ -148,6 +144,12 @@
                     <label for="operwhois" class="col-sm-7 col-form-label border-bottom">Oper Whois Line <span style="font-size: 85%;">(This shows up when someone preforms a whois on you if you are opered up)</span> :</label>
                     <div class="col-sm-5">
                         <input type="text" class="form-control" name="operwhois" placeholder="i.e. Netowrk Administrator" required>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="opervhost" class="col-sm-7 col-form-label border-bottom">Oper vHost Line :</label>
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control" name="opervhost" placeholder="i.e. staff.mynetwork.org" required>
                     </div>
                 </div>
                 <div class="form-group row">
@@ -214,6 +216,12 @@
                         <input type="text" class="form-control" name="operchannel" placeholder="e.g. #admins or #opers or #ircops" required>
                     </div>
                 </div>
+                <div class="form-group row">
+                    <label for="klineadress" class="col-sm-7 col-form-label border-bottom">Set Kline E-mail Adress:</label>
+                    <div class="col-sm-5">
+                        <input type="e-mail" class="form-control" name="klineadress" placeholder="e.g. opers@mynetwork.com" required>
+                    </div>
+                </div>
             <div class="mt-2">
                 <button type="submit" class="btn btn-primary">Generate</button>
             </div>
@@ -232,9 +240,9 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p> To encrypt a password, type <strong>/mkpasswd</strong> into the status window of a network you are
-                    an ircop on.</p> For example <strong>/mkpasswd sha1 test </strong> would return <p> **
-                    Authentication phrase (method=sha1, para=test) is: <span style="font-style: italic">
+                <p> To encrypt a password, type <strong>/mkpasswd argon2</strong> into the status window of a network you are
+                    an ircop on.</p> For example <strong>/mkpasswd argon2 yourpassword</strong> Or  <strong> On *NIX shell: ./unrealircd mkpasswd argon2 yourpassword</strong> would return <p> **
+                    Authentication phrase (method=argon2, para=yourpassword) is: <span style="font-style: italic">
                         $8rvIvg3C$uL/QGEFj2p79Tv1GnruvEUnmDNE=. </span> </p>
                 <p> The section of that to copy and paste into the password box would be
                     $8rvIvg3C$uL/QGEFj2p79Tv1GnruvEUnmDNE=. </p>
