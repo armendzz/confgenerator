@@ -161,7 +161,15 @@
                     <div class="col-sm-5">
                         <input type="text" class="form-control" name="ports[]" placeholder="e.g. 6667" required>
                         <div id="addports"></div>
-                        <button type="button" class="btn btn-success mt-1" onclick="addmoreports()">Add More Port</button>
+                        <div id="moresslp"></div>
+                        <div id="moreserverp"></div>
+                        <div id="moresslserverp"></div>
+                        
+                        <button type="button" class="btn btn-success mt-1 btn-sm" onclick="addmoreports()">+ Port</button>
+                        <button type="button" class="btn btn-success mt-1 btn-sm" onclick="moresslp()">+ ssl Port</button>
+                        <button type="button" class="btn btn-success mt-1 btn-sm" onclick="moreserverp()">+ server Port</button>
+                        <button type="button" class="btn btn-success mt-1 btn-sm" onclick="moresslserverp()">+ ssl server Port</button>
+                        
                     </div>
                 </div>
                 <div class="form-group row">
@@ -314,6 +322,24 @@ $('#pass').trigger('focus')
     function addmoreports() {
         var dummy = '<input type="text" class="form-control mt-1" name="ports[]" placeholder="e.g. 6667" required>\r\n';
         document.getElementById('addports').innerHTML += dummy;  
+    }
+</script>
+<script>
+    function moresslp() {
+        var dummy = '<input type="text" class="form-control mt-1" name="sslports[]" placeholder="ADD SSL PORTS HERE - default is 6697" required>\r\n';
+        document.getElementById('moresslp').innerHTML += dummy;  
+    }
+</script>
+<script>
+    function moreserverp() {
+        var dummy = '<input type="text" class="form-control mt-1" name="serverports[]" placeholder="ADD SERVER PORTS HERE" required>\r\n';
+        document.getElementById('moreserverp').innerHTML += dummy;  
+    }
+</script>
+<script>
+    function moresslserverp() {
+        var dummy = '<input type="text" class="form-control mt-1" name="sslserverports[]" placeholder="ADD SSL SERVER PORTS HERE" required>\r\n';
+        document.getElementById('moresslserverp').innerHTML += dummy;  
     }
 </script>
 @endsection

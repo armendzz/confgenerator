@@ -158,19 +158,41 @@
          
         @forEach($request->ports as $ports){
             listen {
-                ip {{ $request->bindip }};
-                    port {{ $ports }};
+                ip *;
+                port {{ $ports }};
+            };
+        }
+        @endforeach
+
+        /* Standard IRC SSL/TLS port 6679 */
+        @forEach($request->sslports as $ports){
+            listen {
+                ip *;
+                port {{ $ports }};
+                options { ssl; };
+            };
+        }
+        @endforeach
+
+        @forEach($request->serverports as $ports){
+            listen {
+                ip *;
+                port {{ $ports }};
+                options { serversonly; };
+            };
+        }
+        @endforeach
+
+        @forEach($request->sslserverports as $ports){
+            listen {
+                ip *;
+                port {{ $ports }};
+                options { tls; serversonly; };
             };
         }
         @endforeach
          
-        /* Standard IRC SSL/TLS port 6679 */
-        listen {
-            ip {{ $request->bindip }};
-            port 6697;
-            options { ssl; };
-        };
-         
+                
         /*
          * Link blocks allow you to link multiple servers together to form a network.
          * See https://www.unrealircd.org/docs/Tutorial:_Linking_servers
