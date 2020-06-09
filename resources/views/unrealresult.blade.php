@@ -29,7 +29,6 @@
         include "aliases/anope.conf";
         include "spamfilter.conf";
         include "badwords.conf";
-        include "staff.conf";
         include "modules.default.conf";
         include "modules.optional.conf";
         include "operclass.default.conf";
@@ -220,42 +219,10 @@
          * See https://www.unrealircd.org/docs/Tutorial:_Linking_servers
          */
          
-        link services.sisrv.net
-        {
-            incoming {
-                mask 127.0.0.1;
-            };
-         
-            password "changemeplease";
-         
-            class servers;
-        };
-         
-        link irc1.sisrv.net {
-            incoming {
-               mask *;
-            }; 
-            outgoing { 
-            bind-ip *; 
-            hostname  12.13.14.15;
-            port 8080;
-               options { ssl; };
-          };
-            /* We use the SPKI fingerprint of the other server for authentication.
-             * Run './unrealircd spkifp' on the other side to get it.
-             */
-            password "GFpiziI2otejDwnrVTYFMqd/ehYPRJWOekTbfE/YgsY=" { spkifp; };
-            hub *;
-            class servers;
-            verify-certificate yes;
-        };
-         
+              
          
         /* U-lines give other servers (even) more power/commands. */
-        ulines {
-            services.sisrv.net;
-            stats.sisrv.net;
-        };
+       
          
         /* Here you can add a password for the IRCOp-only /DIE and /RESTART commands. */
         drpass {
@@ -313,12 +280,9 @@
         set {
             network-name        "{{ $request->description }}";
             default-server          "{{ $request->name }}";
-            services-server     "services.sisrv.net";
-                sasl-server             "services.sisrv.net";
-            stats-server        "stats.sisrv.net";
             help-channel        "{{ $request->helpchannel }}";
-            hiddenhost-prefix   "SiSrv";
-            prefix-quit         "SiSrv.net";
+            hiddenhost-prefix   "cls";
+            prefix-quit         "Quit";
          
             cloak-keys {
                  "{{ $request->cloakkey1 }}";
@@ -332,13 +296,12 @@
         set {
             kline-address "{{ $request->klineadress }}";
             modes-on-connect "+icxvw";
-                auto-join "#SiSrv";
-                modes-on-join "+ntVCTGf [3j#i1,7m#M1,2n#N1,6t#b]:2";    
+            modes-on-join "+ntVCTGf [3j#i1,7m#M1,2n#N1,6t#b]:2";    
             modes-on-oper    "+WxwgIspq";
-                restrict-usermodes "icvwx";
-                snomask-on-oper "+cFfkejvGnNqsSo";
-                who-limit 3;
-                nick-length 15;
+            restrict-usermodes "icvwx";
+            snomask-on-oper "+cFfkejvGnNqsSo";
+            who-limit 3;
+            nick-length 15;
             oper-auto-join "{{ $request->operchannel }}";
             options {
                 hide-ulines;
@@ -378,8 +341,8 @@
             spamfilter {
                 ban-time 3h;
                 ban-reason "Spamming is not allowed in this network!";
-                virus-help-channel "#SiSrv";
-                    except "#SiSrv,#Staff";
+                virus-help-channel "{{ $request->operchannel }}";
+                    except "{{ $request->operchannel }}";
             };
         };       
         /*
