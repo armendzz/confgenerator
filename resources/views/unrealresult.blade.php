@@ -127,7 +127,7 @@
                 class opers;
                 operclass netadmin-with-override;
                 maxlogins 5;
-                swhois "{{ $request->operwhois }}";
+                swhois "is {{ $request->operwhois }}";
                 vhost {{ $request->opervhost }};
             };
 
@@ -230,12 +230,7 @@
             die "{{ $request->restartpass }}";
         };
          
-        tld {
-            mask *@*;
-            motd ircd.motd;
-            rules ircd.rules;
-            opermotd oper.motd;
-        };
+       
          
         /* The log block defines what should be logged and to what file. */
          
@@ -345,6 +340,17 @@
                     except "{{ $request->operchannel }}";
             };
         };       
+
+        except ban {
+            mask *@192.168.*;
+            mask *@192.0.2.5;
+                type all;
+        };
+
+        except throttle {
+            mask 192.168.1.*;
+        };
+
         /*
          * Unrealircd.conf by DeviL (support@sisrv.net).
          * For any help visit https://www.SiSrv.Net
