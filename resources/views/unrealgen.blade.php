@@ -32,7 +32,10 @@
   cursor: pointer;
 }
 </style>
+@section('css')
+<link rel="stylesheet" href="/css/style.css">
 
+@endsection
 @section('content')
 
 <div class="card mt-2 mb-5">
@@ -56,7 +59,7 @@
             <div class="form-group row">
                 <label for="numericident" class="col-sm-7 col-form-label border-bottom">Numeric Ident - Must be between 1 and 255 & be unique from other shells connected to the network:</label>
                 <div class="col-sm-5">
-                    <input type="number" class="form-control" name="numericident" placeholder="i.e. 1" required>
+                    <input type="number" class="form-control" id="numericident" maxlength="3" name="numericident" pattern="[A-Za-z]{3}" placeholder="i.e. 001, 002" required>
                 </div>
             </div>
             <div class="form-group row">
@@ -349,5 +352,23 @@ $('#pass').trigger('focus')
         var dummy = '<input type="text" class="form-control mt-1" name="sslserverports[]" placeholder="ADD SSL SERVER PORTS HERE" required>\r\n';
         document.getElementById('moresslserverp').innerHTML += dummy;  
     }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        var $regexname=/^[0-9][0-9][0-9]$/;
+        var input = $('#numericident');
+        $('#numericident').on('keypress keydown keyup',function(){
+                 if ($(this).val().match($regexname)) {
+                    $('#numericident').css('border-color',' #5cb85c');
+                    $('#numericident').css('box-shadow','inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 4px #5cb85c');
+                 }
+               else{
+                    // else, do not display message
+                    $('#numericident').css('border-color',' #d9534f');
+                    $('#numericident').css('box-shadow','inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 4px #d9534f');
+                   }
+             });
+    });
 </script>
 @endsection
