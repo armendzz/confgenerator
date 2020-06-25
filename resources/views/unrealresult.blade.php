@@ -276,13 +276,13 @@
             network-name        "{{ $request->description }}";
             default-server          "{{ $request->name }}";
             help-channel        "{{ $request->helpchannel }}";
-            hiddenhost-prefix   "cls";
+            hiddenhost-prefix   "{{ $request->description }}";
             prefix-quit         "Quit";
          
             cloak-keys {
                  "{{ $request->cloakkey1 }}";
                  "{{ $request->cloakkey2 }}";
-                 "{{ $request->cloakkey2 }}";
+                 "{{ $request->cloakkey3 }}";
             };
         };
          
@@ -342,13 +342,13 @@
         };       
 
         except ban {
-            mask *@192.168.*;
-            mask *@192.0.2.5;
+            mask *@*{{ $request->bindip }}*;
+            mask *@*{{ $request->bindip }};
                 type all;
         };
 
         except throttle {
-            mask 192.168.1.*;
+            mask {{ $request->bindip }};
         };
 
         /*
